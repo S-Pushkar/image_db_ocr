@@ -23,6 +23,11 @@ COLLECTION_NAME = "ocr_text_vectors"
 def hello():
     return {"Hello": "World"}
 
+@app.post("/imagetotext/")
+async def image_to_text(file: UploadFile = File(...)):
+    image = file.file.read()
+    result = reader.readtext(image, detail=0)
+    return {"text": " ".join(result)}
 
 def create_collection(collection_name):
     if not utility.has_collection(collection_name):
