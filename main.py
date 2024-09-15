@@ -20,7 +20,7 @@ connections.connect(uri=ZILLIZ_ENDPOINT, token=ZILLIZ_API_KEY)
 COLLECTION_NAME = "ocr_text_vectors"
 
 @app.get("/hello")
-def read_root():
+def hello():
     return {"Hello": "World"}
 
 
@@ -55,14 +55,14 @@ def read_text_from_image(image, email, image_path):
     collection = create_collection(COLLECTION_NAME)
 
     if len(result) > 0:
+        result = " ".join(result)
         vectors = model.encode(result)
-        combined_vector = np.mean(vectors, axis=0)
 
         entities = [
             [email],
             [image_path],
             [int(time.time())],
-            [combined_vector]
+            [vectors.tolist()]
         ]
 
         collection.insert(entities)
