@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Form
+from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Form, EmailStr
 from pymilvus import CollectionSchema, FieldSchema, DataType, Collection
 from pymilvus import connections, utility
 from sentence_transformers import SentenceTransformer
@@ -85,7 +85,7 @@ def read_text_from_image(image, email, image_path):
 
 
 @app.post("/uploadfile/")
-async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...), email: str = Form(...), image_path: str = Form(...)):
+async def upload_file(background_tasks: BackgroundTasks, file: UploadFile = File(...), email: EmailStr = Form(...), image_path: str = Form(...)):
     image = file.file.read()
     background_tasks.add_task(read_text_from_image, image, email, image_path)
     return {"message": "success"}
