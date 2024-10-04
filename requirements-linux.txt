@@ -4,7 +4,9 @@ certifi==2024.8.30
 charset-normalizer==3.3.2
 click==8.1.7
 colorama==0.4.6
+dnspython==2.6.1
 easyocr==1.7.1
+email_validator==2.2.0
 environs==9.5.0
 exceptiongroup==1.2.2
 fastapi==0.114.1

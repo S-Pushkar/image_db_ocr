@@ -1,4 +1,5 @@
-from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Form, EmailStr
+from fastapi import FastAPI, File, UploadFile, BackgroundTasks, Form
+from pydantic import EmailStr
 from pymilvus import CollectionSchema, FieldSchema, DataType, Collection
 from pymilvus import connections, utility
 from sentence_transformers import SentenceTransformer
