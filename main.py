@@ -8,8 +8,40 @@ import numpy as np
 import easyocr
 import time
 import os
+import json
+from contextlib import asynccontextmanager
+from kafka import KafkaConsumer
+import threading
+import base64
+import cv2
 
-app = FastAPI()
+def kafka_consumer_task():
+    consumer = KafkaConsumer('upload-file', 
+                             bootstrap_servers='localhost:9092',
+                             auto_offset_reset='earliest',
+                             enable_auto_commit=True,
+                             group_id='upload-file-group',
+                             value_deserializer=lambda x: json.loads(x.decode('utf-8')))
+    for message in consumer:
+        process_kafka_message(message.value)
+
+def process_kafka_message(message: dict):
+    email = message['email']
+    image_path = message['fileName']
+    image = message['fileContent']
+    image = base64.b64decode(image)
+    image = np.frombuffer(image, dtype=np.uint8)
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    read_text_from_image(image, email, image_path)
+
+@asynccontextmanager
+async def kafka_starter(app: FastAPI):
+    thread = threading.Thread(target=kafka_consumer_task)
+    thread.start()
+    yield
+    thread.join()
+
+app = FastAPI(lifespan=kafka_starter)
 reader = easyocr.Reader(['en', 'kn'])
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
