@@ -15,9 +15,17 @@ import threading
 import base64
 import cv2
 
+load_dotenv(".env.local")
+
+KAFKA_SERVER = ''
+if os.getenv('KAFKA_SERVER'):
+    KAFKA_SERVER = os.getenv('KAFKA_SERVER_DOCKER')
+else:
+    KAFKA_SERVER = 'localhost:9092'
+
 def kafka_consumer_task():
     consumer = KafkaConsumer('upload-file', 
-                             bootstrap_servers='localhost:9092',
+                             bootstrap_servers=KAFKA_SERVER,
                              auto_offset_reset='earliest',
                              enable_auto_commit=True,
                              group_id='upload-file-group',
@@ -45,7 +53,6 @@ app = FastAPI(lifespan=kafka_starter)
 reader = easyocr.Reader(['en', 'kn'])
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-load_dotenv(".env.local")
 ZILLIZ_ENDPOINT = os.getenv("ZILLIZ_ENDPOINT")
 ZILLIZ_API_KEY = os.getenv("ZILLIZ_API_KEY")
 connections.connect(uri=ZILLIZ_ENDPOINT, token=ZILLIZ_API_KEY)
