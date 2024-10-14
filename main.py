@@ -18,7 +18,7 @@ import cv2
 load_dotenv(".env.local")
 
 KAFKA_SERVER = ''
-if os.getenv('KAFKA_SERVER'):
+if os.getenv('KAFKA_SERVER_DOCKER'):
     KAFKA_SERVER = os.getenv('KAFKA_SERVER_DOCKER')
 else:
     KAFKA_SERVER = 'localhost:9092'
